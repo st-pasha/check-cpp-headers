@@ -1,0 +1,26 @@
+name: Check C++ headers
+description: Checks that every C++ file in the repository has valid C++ headers
+
+inputs:
+  paths:
+    description: |
+      The path where source files are located. This could be either a directory,
+      a file, or a glob, or a list thereof. If ommitted, defaults to "." (i.e. scan the
+      entire repository).
+    required: false
+    default: '.'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Run Python Script
+      shell: bash
+      run: python3 check_headers.py ${{ inputs.path }}
