@@ -11,7 +11,13 @@ h_extensions = [".h", ".hh", ".hxx", ".hpp", ".h++"]
 all_extensions = c_extensions + h_extensions
 
 
-# Use `{k: std_symbols_library[k] for k in sorted(std_symbols_library)}` to sort.
+# Mapping of C++ symbols into the list of header files where each symbol is defined. If
+# a symbol is defined in multiple headers, then the first header in the list should be
+# the "most canonical" header. If no such canonical header exists, then put "?" as the
+# first entry in the list.
+#
+# Use `d = std_symbols_library; {k: d[k] for k in sorted(d)}` to sort keys.
+#
 std_symbols_library: dict[str, list[str]] = {
     "int16_t": ["cstdint"],
     "int32_t": ["cstdint"],
