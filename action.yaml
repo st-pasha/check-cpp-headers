@@ -9,6 +9,11 @@ inputs:
       entire repository).
     required: false
     default: '.'
+  ignore:
+    description: |
+      The path(s) that will be ignored by the tool. These could be either individual
+      files, or directories, or glob patterns.
+    required: false
 
 runs:
   using: "composite"
@@ -20,4 +25,7 @@ runs:
 
     - name: Run check_headers script
       shell: bash
-      run: python3 ${{ github.action_path }}/check_headers.py ${{ inputs.paths }}
+      run: |
+        python3 ${{ github.action_path }}/check_headers.py \
+          ${{ inputs.paths }} \
+          --ignore "${{ inputs.ignore }}"
