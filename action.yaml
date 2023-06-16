@@ -13,14 +13,11 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v4.6.1
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4.6.1
       with:
         python-version: '3.10'
 
-    - name: Run Python Script
+    - name: Run check_headers script
       shell: bash
-      run: python3 check_headers.py ${{ inputs.paths }}
+      run: python3 ${{ github.action_path }}/check_headers.py ${{ inputs.paths }}
