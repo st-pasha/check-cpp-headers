@@ -619,7 +619,7 @@ class Source:
         return errors_found
 
 
-def analyze(paths: list[str]) -> int:
+def analyze(paths: list[str], ignore: str | None) -> int:
     all_sources: dict[str, Source] = {}
     for entry in paths:
         if os.path.isfile(entry):
@@ -642,6 +642,26 @@ def analyze(paths: list[str]) -> int:
             if ext.lower() not in all_extensions:
                 continue
             all_sources[file] = Source(file)
+
+    if ignore:
+        for entry in ignore.split():
+            if os.path.isfile(entry):
+                if entry in all_sources:
+                    del all_sources[entry]
+                continue
+            elif os.path.isdir(entry):
+                if entry.endswith("/"):
+                    entry = entry[:-1]
+                pattern = entry + "/**"
+            elif "*" in entry or "?" in entry or "[" in entry:
+                pattern = entry
+            else:
+                raise FileNotFoundError(f"Unknown path `{entry}`")
+
+            files = glob.glob(pattern, recursive=True)
+            for file in files:
+                if file in all_sources:
+                    del all_sources[file]
 
     n_errors = 0
     for src in all_sources.values():
@@ -667,7 +687,12 @@ if __name__ == "__main__":
         metavar="PATH",
         help="Path to the directory with C/C++ source files",
     )
+    parser.add_argument(
+        "--ignore",
+        required=False,
+        help="Path(s) that should be ignored by the checker",
+    )
 
     args = parser.parse_args()
-    ret = analyze(args.paths)
+    ret = analyze(args.paths, args.ignore)
     sys.exit(ret)
