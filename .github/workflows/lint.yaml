@@ -1,0 +1,19 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  black-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: psf/black@stable
+        with:
+          options: "--check --diff --color --preview"
+          version: "~= 23.0"
